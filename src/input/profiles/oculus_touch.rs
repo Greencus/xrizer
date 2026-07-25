@@ -77,7 +77,6 @@ impl InteractionProfile for OculusTouch {
             subpath: DynSubpath::Thumbrest,
             component: Some(DynComponent::Touch),
         } if crate::config::remap_left_thumbrest_to_menu() => {
-            // Return None to reject this path, making it unavailable
             None
         }
             p @ DynInputPath {
@@ -133,11 +132,9 @@ impl InteractionProfile for OculusTouch {
     .flatten()
     .collect::<Vec<_>>();
 
-    // Only add thumbrest if remapping is NOT enabled
     if !crate::config::remap_left_thumbrest_to_menu() {
         thumb_touch.extend(c.leftright::<Thumbrest, Touch, _, _>());
     } else {
-        // If remapping IS enabled, add left menu-click instead of left thumbrest-touch
         thumb_touch.push(
             c.into::<Left<Menu, Click>, _>()
                 .into_iter()
