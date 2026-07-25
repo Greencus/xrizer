@@ -344,9 +344,9 @@ impl<C: openxr_data::Compositor> Input<C> {
             .string_to_path(P::profile_path())
             .unwrap();
         let path_validator = |path| {
-            <P::LegalPaths as LegalPathsT>::is_legal(path)
-                .then_some(path)
-                .or_else(|| P::translate_path(path))
+            P::translate_path(path).or_else(|| {
+    <P::LegalPaths as LegalPathsT>::is_legal(path).then_some(path)
+})
         };
 
         for (action_set_name, bindings) in bindings.iter() {
