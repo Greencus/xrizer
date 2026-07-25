@@ -4,7 +4,7 @@ pub fn remap_left_thumbrest_to_menu() -> bool {
     static ENABLED: OnceLock<bool> = OnceLock::new();
 
     *ENABLED.get_or_init(|| {
-        let Some(value) = std::env::var_os("XRIZER_REMAP_THUMBREST_TO_MENU") else {
+        let Some(value) = std::env::var_os("OPENVR_REMAP_THUMBREST_TO_MENU") else {
             return false;
         };
 
@@ -15,7 +15,7 @@ pub fn remap_left_thumbrest_to_menu() -> bool {
             "0" | "false" | "no" | "off" => false,
             invalid => {
                 log::warn!(
-                    "Invalid XRIZER_REMAP_THUMBREST_TO_MENU value {invalid:?}; \
+                    "Invalid OPENVR_REMAP_THUMBREST_TO_MENU value {invalid:?}; \
                      remap disabled"
                 );
                 false
