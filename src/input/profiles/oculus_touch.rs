@@ -61,16 +61,24 @@ impl InteractionProfile for OculusTouch {
     }
     fn translate_path(path: DynInputPath) -> Option<DynInputPath> {
         match path {
-             DynInputPath {
+        DynInputPath {
+            hand: crate::openxr_data::Hand::Left,
+            subpath: DynSubpath::Menu,
+            component: Some(DynComponent::Click),
+        } if crate::config::remap_left_thumbrest_to_menu() => {
+            Some(DynInputPath {
+                hand: crate::openxr_data::Hand::Left,
+                subpath: DynSubpath::Thumbrest,
+                component: Some(DynComponent::Touch),
+            })
+        }
+        DynInputPath {
             hand: crate::openxr_data::Hand::Left,
             subpath: DynSubpath::Thumbrest,
             component: Some(DynComponent::Touch),
         } if crate::config::remap_left_thumbrest_to_menu() => {
-            Some(DynInputPath {
-                hand: crate::openxr_data::Hand::Left,
-                subpath: DynSubpath::Menu,
-                component: Some(DynComponent::Click),
-            })
+            // Return None to reject this path, making it unavailable
+            None
         }
             p @ DynInputPath {
                 subpath: DynSubpath::Squeeze | DynSubpath::Trigger,
