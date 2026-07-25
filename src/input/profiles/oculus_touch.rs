@@ -122,6 +122,29 @@ impl InteractionProfile for OculusTouch {
     }
 
     fn skeletal_input_bindings(c: &InputToXrPath<Self>) -> SkeletalInputBindings {
+        let mut thumb_touch = vec![
+        c.leftright::<Thumbstick, Touch, _, _>(),
+        c.into::<Left<X, Touch>, _>(),
+        c.into::<Left<Y, Touch>, _>(),
+        c.into::<Right<A, Touch>, _>(),
+        c.into::<Right<B, Touch>, _>(),
+    ]
+    .into_iter()
+    .flatten()
+    .collect::<Vec<_>>();
+
+    // Only add thumbrest if remapping is NOT enabled
+    if !crate::config::remap_left_thumbrest_to_menu() {
+        thumb_touch.extend(c.leftright::<Thumbrest, Touch, _, _>());
+    } else {
+        // If remapping IS enabled, add left menu-click instead of left thumbrest-touch
+        thumb_touch.push(
+            c.into::<Left<Menu, Click>, _>()
+                .into_iter()
+                .next()
+                .unwrap(),
+        );
+    }
         SkeletalInputBindings {
             thumb_touch: [
                 c.leftright::<Thumbstick, Touch, _, _>(),
@@ -129,7 +152,6 @@ impl InteractionProfile for OculusTouch {
                 c.into::<Left<Y, Touch>, _>(),
                 c.into::<Right<A, Touch>, _>(),
                 c.into::<Right<B, Touch>, _>(),
-                c.leftright::<Thumbrest, Touch, _, _>(),
             ]
             .concat(),
             index_touch: c.leftright::<Trigger, Touch, _, _>(),
