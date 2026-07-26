@@ -120,8 +120,8 @@ impl InteractionProfile for OculusTouch {
         }
     }
 
-    fn skeletal_input_bindings(c: &InputToXrPath<Self>) -> SkeletalInputBindings {
-        let mut thumb_touch = vec![
+   fn skeletal_input_bindings(c: &InputToXrPath<Self>) -> SkeletalInputBindings {
+    let mut thumb_touch = vec![
         c.leftright::<Thumbstick, Touch, _, _>(),
         c.into::<Left<X, Touch>, _>(),
         c.into::<Left<Y, Touch>, _>(),
@@ -133,29 +133,22 @@ impl InteractionProfile for OculusTouch {
     .collect::<Vec<_>>();
 
     if !crate::config::remap_left_thumbrest_to_menu() {
+        // Normal behavior: include left thumbrest-touch
         thumb_touch.extend(c.leftright::<Thumbrest, Touch, _, _>());
     } else {
-        thumb_touch.push(
+        // Remapping enabled: add left menu-click instead
+        thumb_touch.extend(
             c.into::<Left<Menu, Click>, _>()
-                .into_iter()
-                .next()
-                .unwrap(),
         );
     }
-        SkeletalInputBindings {
-            thumb_touch: [
-                c.leftright::<Thumbstick, Touch, _, _>(),
-                c.into::<Left<X, Touch>, _>(),
-                c.into::<Left<Y, Touch>, _>(),
-                c.into::<Right<A, Touch>, _>(),
-                c.into::<Right<B, Touch>, _>(),
-            ]
-            .concat(),
-            index_touch: c.leftright::<Trigger, Touch, _, _>(),
-            index_curl: c.leftright::<Trigger, Value, _, _>(),
-            rest_curl: c.leftright::<Squeeze, Value, _, _>(),
-        }
+
+    SkeletalInputBindings {
+        thumb_touch,
+        index_touch: c.leftright::<Trigger, Touch, _, _>(),
+        index_curl: c.leftright::<Trigger, Value, _, _>(),
+        rest_curl: c.leftright::<Squeeze, Value, _, _>(),
     }
+}
 
     fn offset_grip_pose(hand: Hand) -> Mat4 {
         match hand {
